@@ -56,6 +56,21 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "bold",
     textAlign: "center"
+  },
+  yAxisLabelsContainer: {
+    position: "absolute", // Position the labels outside the SVG
+    left: -50, // Align to the left
+    top: 0, // Top align with the graph
+    bottom: 0, // Ensure it stretches to the bottom
+    width: 50, // Define a fixed width for the labels
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  yaxisLabel: {
+    fontSize: 10, // Ensure this is the same fontSize used in renderXAxis
+    color: "black", // Adjust other styles if needed
+    textAlign: "right"
   }
 });
 
@@ -176,33 +191,52 @@ const HomeScreen = () => {
     return xTicks;
   };
 
+  // const renderYAxis = () => {
+  //   const yTicks = [];
+  //   const svgHeight = SIZE; // Replace with your actual SVG height
+
+  //   for (let i = 0; i <= 4; i++) {
+  //     const yValue = yMin + i * yStep;
+
+  //     // Flip the yPosition
+  //     const yPosition = svgHeight - scaleY(yValue);
+
+  //     yTicks.push(
+  //       <React.Fragment key={`yTick-${i}`}>
+  //         <SvgText
+  //           x={30} // Adjust the position to ensure labels appear correctly
+  //           y={yPosition} // Center the label vertically with the tick mark
+  //           fontSize="10"
+  //           fill="black"
+  //           textAnchor="end"
+  //         >
+  //           {yValue.toFixed(0)} {/* Display the value with no decimal */}
+  //         </SvgText>
+  //       </React.Fragment>
+  //     );
+  //   }
+  //   return yTicks;
+  // };
+
   const renderYAxis = () => {
     const yTicks = [];
-    const svgHeight = SIZE; // Replace with your actual SVG height
+    const svgHeight = SIZE;
 
     for (let i = 0; i <= 4; i++) {
       const yValue = yMin + i * yStep;
-
-      // Flip the yPosition
       const yPosition = svgHeight - scaleY(yValue);
 
       yTicks.push(
-        <React.Fragment key={`yTick-${i}`}>
-          <SvgText
-            x={30} // Adjust the position to ensure labels appear correctly
-            y={yPosition} // Center the label vertically with the tick mark
-            fontSize="10"
-            fill="black"
-            textAnchor="end"
-          >
-            {yValue.toFixed(0)} {/* Display the value with no decimal */}
-          </SvgText>
-        </React.Fragment>
+        <View
+          key={`yTick-${i}`}
+          style={{ position: "absolute", top: yPosition }}
+        >
+          <Text style={styles.yaxisLabel}>{yValue.toFixed(0)}</Text>
+        </View>
       );
     }
     return yTicks;
   };
-
   console.log(
     typeof animatedProps?.initial?.value?.d,
     "animatedProps.danimatedProps.d"
@@ -219,7 +253,12 @@ const HomeScreen = () => {
           // alignItems: "center"
         }}
       >
-        <Svg width={SIZE + 20} height={SIZE + 20}>
+        <View style={styles.yAxisLabelsContainer}>{renderYAxis()}</View>
+        <Svg
+          viewBox={`0 0 ${SIZE + 20} ${SIZE + 20}`}
+          width={SIZE + 20}
+          height={SIZE + 20}
+        >
           {/* Define a linear gradient */}
           <LinearGradient
             id="paint0_linear_6389_71142"
@@ -279,7 +318,7 @@ const HomeScreen = () => {
           />
           {/* Render X and Y Axis */}
           {renderXAxis()}
-          {renderYAxis()}
+          {/* {renderYAxis()} */}
         </Svg>
         <Cursor
           translation={translation}
